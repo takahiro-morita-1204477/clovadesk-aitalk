@@ -3,7 +3,6 @@
 from flask import Flask, request, jsonify
 import os, random
 import cek
-from elasticsearch import Elasticsearch
 import pya3rt
 
 apikey = "DZZ5WVUNn4GIYHZFe1lTJRXZgRQawm83"
@@ -11,7 +10,7 @@ apikey = "DZZ5WVUNn4GIYHZFe1lTJRXZgRQawm83"
 app = Flask(__name__)
 
 clova = cek.Clova(
-    application_id="com.example.tutorial.test",
+    application_id="com.example.tutorial.test3",
     default_language="ja",
     debug_mode=True)
 
@@ -37,27 +36,6 @@ def launch_request_handler(clova_request):
     response = clova.response([welcome_japanese])
     return response
 
-# callStatusが解析されたら実行
-@clova.handle.intent("callStatus")
-def number_handler(clova_request):
-    app.logger.info("Intent started")
-    status = clova_request.slot_value("status")
-    app.logger.info("status: {}".format(str(status)))
-    res = get_status(status)
-
-    message_japanese = cek.Message(message="森田さんの{}は{}です。".format(str(status),res), language="ja")
-    response = clova.response([message_japanese])
-    return response
-
-# callTrumpStatusが解析されたら実行
-@clova.handle.intent("callTrumpStatus")
-def number_handler(clova_request):
-    app.logger.info("Intent started")
-    message_japanese = cek.Message(message="トランプ大統領はいま記者会見中です。脳波から読み取ったデータだと、気分は最悪です。少し時間を経た後にコンタクトをとるのがよいでしょう", language="ja")
-    response = clova.response([message_japanese])
-    #response = clova.response("トランプ大統領",reprompt="プーチン大統領")
-    return response
-
 
 # callAITalkが解析されたら実行
 @clova.handle.intent("callAITalk")
@@ -65,7 +43,7 @@ def number_handler(clova_request):
     app.logger.info("Intent started")
     response = a3rtclient.talk("おはよう")
     app.logger.info(response['results'][0]['reply'])
-    message_japanese = cek.Message(message=response['results'][0]['reply'], language="en")
+    message_japanese = cek.Message(message=response['results'][0]['reply'], language="ja")
     response = clova.response([message_japanese])
     return response
 
@@ -82,23 +60,7 @@ def default_handler(request):
     return clova.response("Sorry I don't understand! Could you please repeat?")
 
 
-def get_status(status):
-    app.logger.info("get_status started")
-    try:
-        resjson = client.search(index="mindwavemobile2", size=1, body={"query": {"match_all": {}}, "sort": {"@timestamp": "desc"}})
-        app.logger.info(resjson)
-        if status == "集中度":
-            return str(resjson["hits"]["hits"][0]["_source"]["attention"])
-        elif status == "リラックス度":
-            return str(resjson["hits"]["hits"][0]["_source"]["meditation"])
-        else:
-            return "不明"
-    except Exception as e:
-        app.logger.error("Exception at get_status: %s", e)
-        return "不明"
-
 if __name__ == '__main__':
-    client = Elasticsearch("218.45.184.148:59200")
     a3rtclient = pya3rt.TalkClient(apikey)
     port = int(os.getenv("PORT", 5000))
     app.debug = True
