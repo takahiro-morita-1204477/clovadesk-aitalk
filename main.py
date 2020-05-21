@@ -27,21 +27,20 @@ clova = cek.Clova(
 @app.route('/', methods=['GET', 'POST'])
 def lambda_handler(event=None, context=None):
     app.logger.info('Lambda function invoked index()')
-    message_list = []
     talk_theme = "こんにちは"
     for i in range(5):
         app.logger.info(i)
         app.logger.info("A3RT")
         response = a3rtclient.talk(talk_theme)
-        talk_theme = "人物A:" + response['results'][0]['reply']
+        talk_theme = response['results'][0]['reply']
         app.logger.info(talk_theme)
-        message = cek.Message(message=talk_theme, language="ja")
+        message = cek.Message(message=("人物A:" + talk_theme), language="ja")
         message_list.append(message)
         app.logger.info("CotoGoto")
         response = CotoGoto(talk_theme)
-        talk_theme = "人物B:" + response['text']
+        talk_theme = response['text']
         app.logger.info(talk_theme) 
-        message = cek.Message(message=talk_theme, language="ja")
+        message = cek.Message(message=("人物B:" + talk_theme), language="ja")
         message_list.append(message)
     return 'hello from Flask!'
 
