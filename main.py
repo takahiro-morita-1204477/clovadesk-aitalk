@@ -51,6 +51,7 @@ def launch_request_handler(clova_request):
 def number_handler(clova_request):
     app.logger.info("Intent started")
     talk_theme = clova_request.slot_value("TalkTheme")
+    app.logger.info(talk_theme)
     #A3RT
     a3rt_response = a3rtclient.talk(talk_theme)
     a3rt_message = a3rt_response['results'][0]['reply']
