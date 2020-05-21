@@ -24,6 +24,14 @@ clova = cek.Clova(
     default_language="ja",
     debug_mode=True)
 
+
+def CotoGoto(word):
+    payload = {'text': word, 'app_key': MY_KEY}
+    r = requests.get(ENDPOINT, params=payload)
+    data = r.json()
+    return data
+
+
 message_list = []
 talk_theme = "こんにちは"
 for i in range(5):
@@ -98,12 +106,6 @@ def end_handler(clova_request):
 def default_handler(request):
     return clova.response("Sorry I don't understand! Could you please repeat?")
 
-
-def CotoGoto(word):
-    payload = {'text': word, 'app_key': MY_KEY}
-    r = requests.get(ENDPOINT, params=payload)
-    data = r.json()
-    return data
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
