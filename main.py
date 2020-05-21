@@ -32,13 +32,13 @@ def lambda_handler(event=None, context=None):
         app.logger.info(i)
         app.logger.info("A3RT")
         response = a3rtclient.talk(talk_theme)
-        talk_theme = response['results'][0]['reply']
+        talk_theme = "人物A" + response['results'][0]['reply']
         app.logger.info(talk_theme)
         message = cek.Message(message=talk_theme, language="ja")
         message_list.append(message)
         app.logger.info("CotoGoto")
         response = CotoGoto(talk_theme)
-        talk_theme = response['text']
+        talk_theme = "人物B" + response['text']
         app.logger.info(talk_theme) 
         message = cek.Message(message=talk_theme, language="ja")
         message_list.append(message)
