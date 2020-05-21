@@ -53,7 +53,7 @@ def number_handler(clova_request):
     talk_theme = clova_request.slot_value("TalkTheme")
     app.logger.info(talk_theme)
     message_list = []
-    for i in range():
+    for i in range(2):
         app.logger.info(i)
         app.logger.info("A3RT")
         response = a3rtclient.talk(talk_theme)
