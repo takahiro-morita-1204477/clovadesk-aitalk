@@ -11,6 +11,7 @@ import types
 
 #A3RT
 apikey = "DZZ5WVUNn4GIYHZFe1lTJRXZgRQawm83"
+a3rtclient = pya3rt.TalkClient(apikey)
 
 #CotoGoto
 ENDPOINT = 'https://www.cotogoto.ai/webapi/noby.json'
@@ -22,6 +23,24 @@ clova = cek.Clova(
     application_id="com.example.tutorial.test3",
     default_language="ja",
     debug_mode=True)
+
+message_list = []
+talk_theme = "こんにちは"
+for i in range(5):
+    app.logger.info(i)
+    app.logger.info("A3RT")
+    response = a3rtclient.talk(talk_theme)
+    talk_theme = response['results'][0]['reply']
+    app.logger.info(talk_theme)
+    message = cek.Message(message=talk_theme, language="ja")
+    message_list.append(message)
+    app.logger.info("CotoGoto")
+    response = CotoGoto(talk_theme)
+    talk_theme = response['text']
+    app.logger.info(talk_theme) 
+    message = cek.Message(message=talk_theme, language="ja")
+    message_list.append(message)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def lambda_handler(event=None, context=None):
@@ -40,35 +59,19 @@ def my_service():
 # 起動時の処理
 @clova.handle.launch
 def launch_request_handler(clova_request):
-    open_message = "会話のテーマを教えてください"
-    welcome_japanese = cek.Message(message=open_message, language="ja")
-    response = clova.response([welcome_japanese])
+    #open_message = "会話のテーマを教えてください"
+    #welcome_japanese = cek.Message(message=open_message, language="ja")
+    response = clova.response(message_list)
     return response
 
 
 # callAITalkが解析されたら実行
-@clova.handle.intent("callAITalk")
-def number_handler(clova_request):
+#@clova.handle.intent("callAITalk")
+#def number_handler(clova_request):
+    """
     app.logger.info("Intent started")
     talk_theme = clova_request.slot_value("TalkTheme")
     app.logger.info(talk_theme)
-    message_list = []
-    for i in range(2):
-        app.logger.info(i)
-        app.logger.info("A3RT")
-        response = a3rtclient.talk(talk_theme)
-        talk_theme = response['results'][0]['reply']
-        app.logger.info(talk_theme)
-        message = cek.Message(message=talk_theme, language="ja")
-        message_list.append(message)
-        app.logger.info("CotoGoto")
-        response = CotoGoto(talk_theme)
-        talk_theme = response['text']
-        app.logger.info(talk_theme) 
-        message = cek.Message(message=talk_theme, language="ja")
-        message_list.append(message)
-    response = clova.response(message_list)
-    """
     #A3RT
     a3rt_response = a3rtclient.talk(talk_theme)
     a3rt_message = a3rt_response['results'][0]['reply']
@@ -80,8 +83,8 @@ def number_handler(clova_request):
     message1 = cek.Message(message=a3rt_message, language="ja")
     message2 = cek.Message(message=cotogoto_message, language="ja")
     response = clova.response([message1,message2])
-    """
     return response
+    """
 
 
 # 終了時
@@ -103,7 +106,6 @@ def CotoGoto(word):
     return data
 
 if __name__ == '__main__':
-    a3rtclient = pya3rt.TalkClient(apikey)
     port = int(os.getenv("PORT", 5000))
     app.debug = True
     app.run(host="0.0.0.0", port=port)
