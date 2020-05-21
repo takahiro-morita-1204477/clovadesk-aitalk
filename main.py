@@ -41,7 +41,8 @@ def launch_request_handler(clova_request):
 @clova.handle.intent("callAITalk")
 def number_handler(clova_request):
     app.logger.info("Intent started")
-    response = a3rtclient.talk("おはよう")
+    talk_theme = clova_request.slot_value("TalkTheme")
+    response = a3rtclient.talk(talk_theme)
     app.logger.info(response['results'][0]['reply'])
     message_japanese = cek.Message(message=response['results'][0]['reply'], language="ja")
     response = clova.response([message_japanese])
