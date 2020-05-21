@@ -5,7 +5,16 @@ import os, random
 import cek
 import pya3rt
 
+import requests
+import json
+import types
+
+#A3RT
 apikey = "DZZ5WVUNn4GIYHZFe1lTJRXZgRQawm83"
+
+#CotoGoto
+ENDPOINT = 'https://www.cotogoto.ai/webapi/noby.json'
+MY_KEY = '6cc2adb8f63f85adc3572a10cd8fd0ec'
 
 app = Flask(__name__)
 
@@ -42,10 +51,17 @@ def launch_request_handler(clova_request):
 def number_handler(clova_request):
     app.logger.info("Intent started")
     talk_theme = clova_request.slot_value("TalkTheme")
-    response = a3rtclient.talk(talk_theme)
-    app.logger.info(response['results'][0]['reply'])
-    message_japanese = cek.Message(message=response['results'][0]['reply'], language="ja")
-    response = clova.response([message_japanese])
+    #A3RT
+    a3rt_response = a3rtclient.talk(talk_theme)
+    a3rt_message = a3rt_response['results'][0]['reply']
+    app.logger.info(a3rt_message)
+    #CotoGoto
+    cotogoto_response = CotoGoto(a3rt_message)
+    cotogoto_message = cotogoto_response['text']
+    app.logger.info(cotogoto_message)
+    message1 = cek.Message(message=a3rt_message, language="ja")
+    message2 = cek.Message(message=cotogoto_message, language="ja")
+    response = clova.response([message1,message2])
     return response
 
 
@@ -60,6 +76,12 @@ def end_handler(clova_request):
 def default_handler(request):
     return clova.response("Sorry I don't understand! Could you please repeat?")
 
+
+def CotoGoto(word):
+    payload = {'text': word, 'app_key': MY_KEY}
+    r = requests.get(ENDPOINT, params=payload)
+    data = r.json()
+    return data
 
 if __name__ == '__main__':
     a3rtclient = pya3rt.TalkClient(apikey)
