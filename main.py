@@ -11,7 +11,6 @@ import types
 
 #A3RT
 apikey = "DZZ5WVUNn4GIYHZFe1lTJRXZgRQawm83"
-a3rtclient = pya3rt.TalkClient(apikey)
 
 #CotoGoto
 ENDPOINT = 'https://www.cotogoto.ai/webapi/noby.json'
@@ -24,35 +23,25 @@ clova = cek.Clova(
     default_language="ja",
     debug_mode=True)
 
-
-def CotoGoto(word):
-    payload = {'text': word, 'app_key': MY_KEY}
-    r = requests.get(ENDPOINT, params=payload)
-    data = r.json()
-    return data
-
-
-message_list = []
-talk_theme = "こんにちは"
-for i in range(5):
-    app.logger.info(i)
-    app.logger.info("A3RT")
-    response = a3rtclient.talk(talk_theme)
-    talk_theme = response['results'][0]['reply']
-    app.logger.info(talk_theme)
-    message = cek.Message(message=talk_theme, language="ja")
-    message_list.append(message)
-    app.logger.info("CotoGoto")
-    response = CotoGoto(talk_theme)
-    talk_theme = response['text']
-    app.logger.info(talk_theme) 
-    message = cek.Message(message=talk_theme, language="ja")
-    message_list.append(message)
-
-
 @app.route('/', methods=['GET', 'POST'])
 def lambda_handler(event=None, context=None):
     app.logger.info('Lambda function invoked index()')
+    message_list = []
+    talk_theme = "こんにちは"
+    for i in range(5):
+        app.logger.info(i)
+        app.logger.info("A3RT")
+        response = a3rtclient.talk(talk_theme)
+        talk_theme = response['results'][0]['reply']
+        app.logger.info(talk_theme)
+        message = cek.Message(message=talk_theme, language="ja")
+        message_list.append(message)
+        app.logger.info("CotoGoto")
+        response = CotoGoto(talk_theme)
+        talk_theme = response['text']
+        app.logger.info(talk_theme) 
+        message = cek.Message(message=talk_theme, language="ja")
+        message_list.append(message)
     return 'hello from Flask!'
 
 # /clova に対してのPOSTリクエストを受け付けるサーバーを立てる
@@ -107,7 +96,15 @@ def default_handler(request):
     return clova.response("Sorry I don't understand! Could you please repeat?")
 
 
+def CotoGoto(word):
+    payload = {'text': word, 'app_key': MY_KEY}
+    r = requests.get(ENDPOINT, params=payload)
+    data = r.json()
+    return data
+
+
 if __name__ == '__main__':
+    a3rtclient = pya3rt.TalkClient(apikey)
     port = int(os.getenv("PORT", 5000))
     app.debug = True
     app.run(host="0.0.0.0", port=port)
