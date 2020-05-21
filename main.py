@@ -31,7 +31,7 @@ def my_service():
 # 起動時の処理
 @clova.handle.launch
 def launch_request_handler(clova_request):
-    open_message = "知りたい情報を教えてください"
+    open_message = "会話のテーマを教えてください"
     welcome_japanese = cek.Message(message=open_message, language="ja")
     response = clova.response([welcome_japanese])
     return response
