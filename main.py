@@ -52,6 +52,23 @@ def number_handler(clova_request):
     app.logger.info("Intent started")
     talk_theme = clova_request.slot_value("TalkTheme")
     app.logger.info(talk_theme)
+    message_list = []
+    for i in range(5):
+        app.logger.info(i)
+        app.logger.info("A3RT")
+        response = a3rtclient.talk(talk_theme)
+        talk_theme = response['results'][0]['reply']
+        app.logger.info(talk_theme)
+        message = cek.Message(message=talk_theme, language="ja")
+        message_list.append(message)
+        app.logger.info("CotoGoto")
+        response = CotoGoto(talk_theme)
+        talk_theme = response['text']
+        app.logger.info(talk_theme) 
+        message = cek.Message(message=talk_theme, language="ja")
+        message_list.append(message)
+    response = clova.response(message_list)
+    """
     #A3RT
     a3rt_response = a3rtclient.talk(talk_theme)
     a3rt_message = a3rt_response['results'][0]['reply']
@@ -63,6 +80,7 @@ def number_handler(clova_request):
     message1 = cek.Message(message=a3rt_message, language="ja")
     message2 = cek.Message(message=cotogoto_message, language="ja")
     response = clova.response([message1,message2])
+    """
     return response
 
 
