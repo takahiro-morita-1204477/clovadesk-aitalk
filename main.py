@@ -16,6 +16,7 @@ apikey = "DZZ5WVUNn4GIYHZFe1lTJRXZgRQawm83"
 ENDPOINT = 'https://www.cotogoto.ai/webapi/noby.json'
 MY_KEY = '6cc2adb8f63f85adc3572a10cd8fd0ec'
 
+message_list = []
 app = Flask(__name__)
 
 clova = cek.Clova(
