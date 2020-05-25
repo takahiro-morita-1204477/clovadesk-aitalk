@@ -33,6 +33,7 @@ def lambda_handler(event=None, context=None):
         app.logger.info(i)
         app.logger.info("A3RT")
         response = a3rtclient.talk(talk_theme)
+        time.sleep(2)
         talk_theme = response['results'][0]['reply']
         app.logger.info(talk_theme)
         message = cek.Message(message=("人物A:" + talk_theme), language="ja")
@@ -43,7 +44,6 @@ def lambda_handler(event=None, context=None):
         app.logger.info(talk_theme) 
         message = cek.Message(message=("人物B:" + talk_theme), language="ja")
         message_list.append(message)
-        time.sleep(2)
     return 'hello from Flask!'
 
 # /clova に対してのPOSTリクエストを受け付けるサーバーを立てる
