@@ -28,7 +28,7 @@ clova = cek.Clova(
 def lambda_handler(event=None, context=None):
     app.logger.info('Lambda function invoked index()')
     talk_theme = "こんにちは"
-    for i in range():
+    for i in range(20):
         app.logger.info(i)
         app.logger.info("A3RT")
         response = a3rtclient.talk(talk_theme)
