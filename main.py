@@ -11,11 +11,11 @@ import types
 import time
 
 #A3RT
-apikey = "DZZ5WVUNn4GIYHZFe1lTJRXZgRQawm83"
+apikey = "---"
 
 #CotoGoto
 ENDPOINT = 'https://www.cotogoto.ai/webapi/noby.json'
-MY_KEY = '6cc2adb8f63f85adc3572a10cd8fd0ec'
+MY_KEY = '---'
 
 message_list = []
 app = Flask(__name__)
